@@ -1,0 +1,34 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+ 
+   <http security="none" pattern="/mer/registerMerchant.htm**"/>
+   <http security="none" pattern="/mer/verifyMerchant.htm**"/>
+   <http auto-config="true" use-expressions="true">
+		<intercept-url pattern="/mer/*.htm**" access="hasAnyRole('MERCHANT_ROLE', 'ADMIN_ROLE')" />
+		<intercept-url pattern="/admin/*.htm**" access="hasRole('ADMIN_ROLE')" />
+		<intercept-url pattern="/admin/*.jsp**" access="hasRole('ADMIN_ROLE')" />
+		<intercept-url pattern="/jsp/merchant-console.jsp**" access="hasAnyRole('ADMIN_ROLE', 'MERCHANT_ROLE')" />
+		<access-denied-handler error-page="/jsp/403.jsp" />
+ 		<form-login 
+		    login-page="/jsp/merchant-login.jsp" 
+		    default-target-url="/security/handle.htm" 
+			authentication-failure-url="/jsp/merchant-login.jsp?error=Invalid username or password" 
+			username-parameter="_loginId"
+			password-parameter="_cred" />
+		<logout logout-success-url="/jsp/merchant-login.jsp?success=You have seccessfully logged out"  />
+		<csrf/>
+	</http>
+	<authentication-manager>
+ 		<authentication-provider>
+			<jdbc-user-service data-source-ref="dataSource"
+ 				users-by-username-query= "select _MER_ID, _CRED, CASE _STATUS WHEN 'A' THEN 'true' ELSE 'false' END 'ENABLED' from _mer_login where _MER_ID=?"
+  				authorities-by-username-query= "select _MER_ID, _ROLE from _mer_login where _MER_ID=?" />
+ 		</authentication-provider>
+	</authentication-manager>
+</beans:beans>

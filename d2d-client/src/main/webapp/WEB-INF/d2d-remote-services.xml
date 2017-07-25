@@ -1,0 +1,94 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="
+   http://www.springframework.org/schema/beans     
+   http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+   http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context-3.2.xsd">	
+
+	<!--Merchant  -->
+    <bean id="merchantImpl" class="com.d2d.service.MerchantService"></bean>  
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">  
+	    <property name="service" ref="merchantImpl"></property>  
+	    <property name="serviceInterface" value="com.d2d.service.intf.MerchantServiceIntf"></property>  
+	    <property name="serviceName" value="merchantService"></property>  
+	    <property name="replaceExistingBinding" value="true"></property>  
+	    <property name="registryPort" value="1099"></property>  
+	</bean> 
+	
+    <bean id="merchantDBImpl" class="com.d2d.db.mediator.impl.MerchantDBMediatorImpl"></bean>  
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">  
+	    <property name="service" ref="merchantDBImpl"></property>  
+	    <property name="serviceInterface" value="com.d2d.db.mediator.intf.MerchantDBMediatorIntf"></property>  
+	    <property name="serviceName" value="merchantDBService"></property>  
+	    <property name="replaceExistingBinding" value="true"></property>  
+	    <property name="registryPort" value="1099"></property>  
+	</bean>
+	
+	<!--Offer  -->
+	<bean id="offerImpl" class="com.d2d.service.OfferService"></bean>  
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">  
+	    <property name="service" ref="offerImpl"></property>  
+	    <property name="serviceInterface" value="com.d2d.service.intf.OfferServiceIntf"></property>  
+	    <property name="serviceName" value="offerService"></property>  
+	    <property name="replaceExistingBinding" value="true"></property>  
+	    <property name="registryPort" value="1099"></property>  
+	</bean>
+	
+	<bean id="offerDBImpl" class="com.d2d.db.mediator.impl.OfferDBMediatorImpl"></bean>  
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">  
+	    <property name="service" ref="offerDBImpl"></property>  
+	    <property name="serviceInterface" value="com.d2d.db.mediator.intf.OfferDBMediatorIntf"></property>  
+	    <property name="serviceName" value="offerDBService"></property>  
+	    <property name="replaceExistingBinding" value="true"></property>  
+	    <property name="registryPort" value="1099"></property>  
+	</bean>
+	
+	<bean id="offerDFImpl" class="com.d2d.datafile.mediator.impl.OfferDatafileMediatorImpl"></bean>  
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">  
+	    <property name="service" ref="offerDFImpl"></property>  
+	    <property name="serviceInterface" value="com.d2d.datafile.mediator.intf.OfferDatafileMediatorIntf"></property>  
+	    <property name="serviceName" value="offerDFService"></property>  
+	    <property name="replaceExistingBinding" value="true"></property>  
+	    <property name="registryPort" value="1099"></property>  
+	</bean>  
+	
+	<!--Location  -->
+	<bean id="locationImpl" class="com.d2d.service.LocationService"></bean>  
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">  
+	    <property name="service" ref="locationImpl"></property>  
+	    <property name="serviceInterface" value="com.d2d.service.intf.LocationServiceIntf"></property>  
+	    <property name="serviceName" value="locationService"></property>  
+	    <property name="replaceExistingBinding" value="true"></property>  
+	    <property name="registryPort" value="1099"></property>  
+	</bean> 
+	
+    <bean id="locationDBImpl" class="com.d2d.db.mediator.impl.LocationDBMediatorImpl"></bean>  
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">  
+	    <property name="service" ref="locationDBImpl"></property>  
+	    <property name="serviceInterface" value="com.d2d.db.mediator.intf.LocationDBMediatorIntf"></property>  
+	    <property name="serviceName" value="locationDBService"></property>  
+	    <property name="replaceExistingBinding" value="true"></property>  
+	    <property name="registryPort" value="1099"></property>  
+	</bean>
+	
+	<!--Coupon  -->
+	<bean id="couponImpl" class="com.d2d.service.CouponService"></bean>  
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">  
+	    <property name="service" ref="couponImpl"></property>  
+	    <property name="serviceInterface" value="com.d2d.service.intf.CouponServiceIntf"></property>  
+	    <property name="serviceName" value="couponService"></property>  
+	    <property name="replaceExistingBinding" value="true"></property>  
+	    <property name="registryPort" value="1099"></property>  
+	</bean> 
+	
+    <bean id="couponDBImpl" class="com.d2d.db.mediator.impl.CouponDBMediatorImpl"></bean>  
+	<bean class="org.springframework.remoting.rmi.RmiServiceExporter">  
+	    <property name="service" ref="couponDBImpl"></property>  
+	    <property name="serviceInterface" value="com.d2d.db.mediator.intf.CouponDBMediatorIntf"></property>  
+	    <property name="serviceName" value="couponDBService"></property>  
+	    <property name="replaceExistingBinding" value="true"></property>  
+	    <property name="registryPort" value="1099"></property>  
+	</bean>
+</beans>

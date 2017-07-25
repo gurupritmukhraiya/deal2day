@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS `test`.`mail`;
+CREATE TABLE  `test`.`mail` (
+  `MAIL_ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ATTACHMENT` tinyblob,
+  `MAIL_BODY` tinyblob NOT NULL,
+  `FROM_MAIL_ID` varchar(255) NOT NULL,
+  `SUBJECT` varchar(255) NOT NULL,
+  `TO_MAIL_ID` varchar(255) NOT NULL,
+  PRIMARY KEY (`MAIL_ID`),
+  UNIQUE KEY `MAIL_ID` (`MAIL_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;

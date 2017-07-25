@@ -1,0 +1,26 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location">
+			<value>AffilateClient.properties</value>
+		</property>
+	</bean>
+	
+	
+	<bean id="affilateAPI" class="com.d2d.hasoffers.api.AbstractOnlineOfferClient" scope="prototype">
+		<property name="helper" ref="payoomHelper" />
+	</bean>
+	
+	<bean id="payoom" class="com.d2d.hasoffers.api.ClientURLHelper" scope="prototype">
+		<property name="networkId" value="${payoom.network.id}" />
+		<property name="apiKey" value="${payoom.api.key}" />
+	</bean>
+	
+	<bean id="vcommision" class="com.d2d.hasoffers.api.ClientURLHelper" scope="prototype">
+		<property name="networkId" value="${vcommision.network.id}" />
+		<property name="apiKey" value="${vcommision.api.key}" />
+	</bean>
+</beans>

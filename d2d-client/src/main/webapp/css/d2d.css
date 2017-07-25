@@ -1,0 +1,100 @@
+body{
+	padding-top:50px;
+	font-family: 'Jura', sans-serif;
+}
+.demo {
+  margin:0 auto;
+  width:70%;
+  height:250px;
+}
+.thumbnail{
+	padding :0;	
+}
+.modal-body{
+	padding:30px 50px;
+}
+.modal-sm {
+    width: 400px;
+}
+.form-control,
+.input-group-addon,
+.btn,
+.thumbnail,
+.modal-content,
+.container .jumbotron, 
+.container-fluid .jumbotron,
+.well,
+.dropdown-menu {
+	border-radius:0px;
+}
+.input-group-addon{
+	background-color: #337ab7;
+    color: #fff;
+}
+.address{
+	margin: 20px;
+	border: 1px dashed orange;
+}
+.tab-content > .active {
+    padding: 20px;
+}
+.navbar-default .navbar-nav > li > a {
+    color: #fff;
+    font-weight: bold;
+}
+.navbar-default {
+    background-color: #2e9afe;
+    border-color: #2e9afe;
+}
+.navbar-brand {
+    height: 40px;
+    line-height: 20px;
+    color:#fff;
+    padding-top:5px;
+}
+.navbar-default .navbar-nav > .active > a, navbar-default .navbar-nav > .active > a:hover {
+    background-color: #fff;
+    color: #2e9afe;
+}
+.dropdown-menu > li > a:hover {
+    background-color: #2e9afe;
+    color: #fff;
+    text-decoration: none;
+}
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover {
+    background-color: #fff;
+    color: #2e9afe;
+}
+
+.navbar-default .navbar-nav > li > a:hover {
+    background-color: #fff;
+    color: #2e9afe;
+}
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover {
+    background-color: #fff;
+    color: #2e9afe;
+}
+.panel-title {
+    font-size: 2em;
+    font-weight:bold;
+}
+
+/*Custom  */
+.title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width:100%;
+}
+
+#send-coupon-model{
+	padding-right: 17px;
+}
+
+#c-code {
+    border:2px dashed;
+    border-radius: 0;
+    margin-bottom: 15px;
+    padding: 5px;
+    font-size:1.5em;
+}

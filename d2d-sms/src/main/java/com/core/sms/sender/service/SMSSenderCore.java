@@ -1,0 +1,51 @@
+package com.core.sms.sender.service;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import com.sms.bean.SMS;
+
+public class SMSSenderCore {
+    private static SMSSenderCore smsSenderCore;
+
+    public static SMSSenderCore getInstanse() {
+        if (smsSenderCore == null) {
+            smsSenderCore = new SMSSenderCore();
+        }
+        return smsSenderCore;
+    }
+
+    public synchronized String sendSMS(SMS sms) {
+        String output = null;
+        
+        String url = "http://login.redsms.in/API/SendMessage.ashx?user=<user>&password=<pass>&phone=" + sms.getTo() + "&text=" + sms.getText() + "&type=t&senderid=<senderid> ";
+        url = url.replaceAll(" ", "%20");
+        try {
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection)obj.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            StringBuffer response = new StringBuffer();
+            while ((output = in.readLine()) != null) {
+                response.append(output);
+            }
+            in.close();
+            output = response.toString();
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return output;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(SMSSenderCore.getInstanse().sendSMS(new SMS("", "9890728332", "Test Send SMS API")));
+    }
+}
+

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans   
+	http://www.springframework.org/schema/beans/spring-beans.xsd">  
+      
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+ 		<property name="location">
+			<value>url.properties</value>
+		</property>
+	</bean>
+      
+	<!--Provider Services  -->     
+	<bean id="merchantService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">  
+		<property name="serviceUrl" value="${merchant.serviceUrl}"></property>  
+		<property name="serviceInterface" value="${merchant.serviceInterface}"></property>
+		<property name="refreshStubOnConnectFailure" value="true"></property>
+		<property name="lookupStubOnStartup" value="false"></property>
+		<property name="cacheStub" value="false"></property>  
+	</bean>	
+	<bean id="merchantDBService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">  
+		<property name="serviceUrl" value="${merchant.db.serviceUrl}"></property>  
+		<property name="serviceInterface" value="${merchant.db.serviceInterface}"></property>
+		<property name="refreshStubOnConnectFailure" value="true"></property>
+		<property name="lookupStubOnStartup" value="false"></property>
+		<property name="cacheStub" value="false"></property>  
+	</bean>	
+	
+	<!--Offer Services  -->
+	<bean id="offerService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">  
+		<property name="serviceUrl" value="${offer.serviceUrl}"></property>  
+		<property name="serviceInterface" value="${offer.serviceInterface}"></property>
+		<property name="refreshStubOnConnectFailure" value="true"></property>
+		<property name="lookupStubOnStartup" value="false"></property>
+		<property name="cacheStub" value="false"></property>  
+	</bean>	
+	<bean id="offerDBService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">  
+		<property name="serviceUrl" value="${offer.db.serviceUrl}"></property>  
+		<property name="serviceInterface" value="${offer.db.serviceInterface}"></property>
+		<property name="refreshStubOnConnectFailure" value="true"></property>
+		<property name="lookupStubOnStartup" value="false"></property>
+		<property name="cacheStub" value="false"></property>  
+	</bean>	
+	<bean id="offerDFService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">  
+		<property name="serviceUrl" value="${offer.df.serviceUrl}"></property>  
+		<property name="serviceInterface" value="${offer.df.serviceInterface}"></property>
+		<property name="refreshStubOnConnectFailure" value="true"></property>
+		<property name="lookupStubOnStartup" value="false"></property>
+		<property name="cacheStub" value="false"></property>  
+	</bean> 	
+	
+	<!--Location Services  -->     
+	<bean id="locationService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">  
+		<property name="serviceUrl" value="${location.serviceUrl}"></property>  
+		<property name="serviceInterface" value="${location.serviceInterface}"></property>
+		<property name="refreshStubOnConnectFailure" value="true"></property>
+		<property name="lookupStubOnStartup" value="false"></property>
+		<property name="cacheStub" value="false"></property>  
+	</bean>	
+	<bean id="locationDBService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">  
+		<property name="serviceUrl" value="${location.db.serviceUrl}"></property>  
+		<property name="serviceInterface" value="${location.db.serviceInterface}"></property>
+		<property name="refreshStubOnConnectFailure" value="true"></property>
+		<property name="lookupStubOnStartup" value="false"></property>
+		<property name="cacheStub" value="false"></property>  
+	</bean>	
+	
+	<!--Coupon Services  -->     
+	<bean id="couponService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">  
+		<property name="serviceUrl" value="${coupon.serviceUrl}"></property>  
+		<property name="serviceInterface" value="${coupon.serviceInterface}"></property>
+		<property name="refreshStubOnConnectFailure" value="true"></property>
+		<property name="lookupStubOnStartup" value="false"></property>
+		<property name="cacheStub" value="false"></property>  
+	</bean>	
+	<bean id="couponDBService" class="org.springframework.remoting.rmi.RmiProxyFactoryBean">  
+		<property name="serviceUrl" value="${coupon.db.serviceUrl}"></property>  
+		<property name="serviceInterface" value="${coupon.db.serviceInterface}"></property>
+		<property name="refreshStubOnConnectFailure" value="true"></property>
+		<property name="lookupStubOnStartup" value="false"></property>
+		<property name="cacheStub" value="false"></property>  
+	</bean>
+</beans>  

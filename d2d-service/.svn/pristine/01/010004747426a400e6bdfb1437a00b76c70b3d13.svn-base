@@ -1,0 +1,178 @@
+package com.d2d.service;
+
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.core.mail.sender.service.MailService;
+import com.core.sms.sender.service.SMSService;
+import com.core.sms.sender.service.intf.SMSServiceIntf;
+import com.d2d.db.mediator.intf.CouponDBMediatorIntf;
+import com.d2d.service.common.beans.Coupon;
+import com.d2d.service.common.beans.Location;
+import com.d2d.service.common.beans.Merchant;
+import com.d2d.service.common.beans.Offer;
+import com.d2d.service.common.beans.Subscriber;
+import com.d2d.service.intf.CouponServiceIntf;
+import com.d2d.service.intf.LocationServiceIntf;
+import com.d2d.service.intf.MerchantServiceIntf;
+import com.d2d.service.intf.OfferServiceIntf;
+import com.d2d.service.locator.ServiceLocator;
+import com.d2d.service.templates.MailTemplates;
+import com.d2d.service.templates.SMSTemplates;
+import com.d2d.service.util.DateUtil;
+import com.d2d.service.util.Response;
+import com.d2d.service.util.VerificationUtil;
+import com.mail.bean.Mail;
+
+public class CouponService implements CouponServiceIntf {
+
+	private CouponDBMediatorIntf couponDBService = ServiceLocator.getServiceLocator().getCouponDBService();
+	private SMSServiceIntf smsService = SMSService.getInstanse();
+	private OfferServiceIntf offerService = ServiceLocator.getServiceLocator().getOfferService();
+	private LocationServiceIntf locationService = ServiceLocator.getServiceLocator().getLocationService();
+	private MerchantServiceIntf merchantService = ServiceLocator.getServiceLocator().getMerchantService();
+
+	@Override
+	public void sendCoupon(Coupon coupon) {
+		Date endDate = new Date(DateUtil.E_MMM_dd_HH_mm_ss_Z_yyyy_TO_MILIS(coupon.getEndDate()));
+		SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy");
+        coupon.setEndDate(dateFormat.format(endDate));
+        
+        if(coupon.getCouponCode().isEmpty())
+		   coupon.setCouponCode(VerificationUtil.getAlphaNumeric(5));
+		
+        String template = SMSTemplates.sendCouponCodeTamplate(coupon);
+		smsService.sendSMS(coupon.getMobileNo(), template);
+		
+		couponDBService.addSentCoupon(coupon);
+	}	
+	
+	@Override
+	public Response registerSubscriber(Subscriber subs) {
+		Subscriber subsFromDB = this.couponDBService.addSubscriber(subs);
+		
+		 if (subsFromDB != null) {
+	            if (subsFromDB.getIdx() != 0) {
+	            	
+	            /*	if(!subs.getContact().matches("\\d+"))
+	            		MailTemplates.getSubscriberConfirmationMailTemplate("");
+	            	*/
+	                return new Response("success", "Successfully registered");
+	            }
+	        } else {
+	            return new Response("fail", "Already registered");
+	        }
+	        return new Response("fail", "Something went wrong, please try again");
+	}
+	
+	@Override
+	public Response unSubscribeNewsLetter(String contact) {
+		boolean temp = this.couponDBService.unSubscribe(contact);		
+		if(temp){
+			MailTemplates.getUnsubscriberConfirmationMailTemplate();
+			return new Response("success", "Successfully Unsubscribed");
+		}else {
+            return new Response("fail", "Already Unsubscribed or some thing worng, Please try after some time");
+        }
+	}
+	
+	@Override
+	public Response sendDeal(Coupon coupon, boolean isContact, boolean isEmail) {
+		
+		try{
+		
+		Offer offer = offerService.getOffer(coupon.getProviderId(), coupon.getOfferId());
+		Location location = locationService.getLocation(offer.getLocations().get(0));
+		Merchant merchant = merchantService.getMerchantByMerchantID(coupon.getProviderId());
+		
+		coupon.setEndDate(offer.getEndDate().toString());
+		
+		if(offer.getPromoCode() == null || offer.getPromoCode().equals(""))
+			offer.setPromoCode(VerificationUtil.getAlphaNumeric(5));
+		coupon.setCouponCode(offer.getPromoCode());
+		
+		if(location == null || location.equals("")){
+			location.setArea("-NA-");
+			location.setCity("-NA-");
+		}
+			
+		coupon.setLocation(location.getArea()+ " " +location.getCity());
+		coupon.setProviderName(offer.getMerchantName());
+		
+		if(isContact)
+		   sendCoupon(coupon);
+		
+		if(isEmail){
+			 Mail mail = new Mail();
+			 mail.setFrom("deal@deal2day.in");
+			 mail.setTo(coupon.getSendTo());
+			 mail.setSubject("Your Deal From Deal2Day Is Now Active For : "+merchant.getMerchantName());
+			 mail.setCreatedDate(new Date());
+			 mail.setBody(new String("This Is Deal2day Deal Info Mail"+merchant.getMerchantName()).getBytes());
+			 
+			 MailService.getInstanse().addMail(mail);
+			 
+			 Map<String, Object> objectMap = new HashMap<String, Object>();
+			
+			 if(offer.getDescription().isEmpty())
+				 offer.setDescription(Arrays.asList(new String[]{"HighLights Not available."}));
+			 if(offer.getTermsAndConditions().isEmpty())
+				 offer.setTermsAndConditions(Arrays.asList(new String[]{"Terms and Conditions Not available."}));
+			 
+			 objectMap.put("contactNumber",coupon.getMobileNo());
+			 objectMap.put("email", coupon.getSendTo());
+			 objectMap.put("image", offer.getImageURL());
+			 objectMap.put("summary", offer.getOfferSummary());
+			 objectMap.put("couponCode", offer.getPromoCode());
+			 objectMap.put("highLight", offer.getDescription());
+			 objectMap.put("terms", offer.getTermsAndConditions());
+			 objectMap.put("location", location);
+			 objectMap.put("merchant", merchant.getMerchantName());
+			 objectMap.put("offerURL", offer.getUrl());
+			 
+			 if(coupon.getMobileNo() == null)
+				 objectMap.put("contactNumber","NA");
+			 if(location == null || location.equals(""))
+				 objectMap.put("location", "-Address Not Available-");
+			 
+			 MailService.getInstanse().sendMail(mail, "C://", "emailtemplate.vm", objectMap);
+		  }
+		
+		 
+		 //informToMerchantByMail(coupon, offer, merchant);
+		 //informToMerchantBySMS(coupon, offer.getOfferSummary(), merchant.getContactNo());
+		 
+		 return new Response("success", "Successfully Sent Coupon Message.");
+	   
+		}catch(Exception ex){
+		   ex.printStackTrace();
+		   return new Response("fail", "some thing worng, Please try after some time");
+	   }
+	}
+	
+	@Override
+	public void informToMerchantByMail(Coupon coupon, Offer offer, Merchant merchant) {
+		
+		
+		Mail mail = new Mail();
+		mail.setFrom("service@deal2day.in");
+		mail.setTo(merchant.getEmailId());
+		mail.setSubject(coupon.getUserName()+" : is Intersted In Your Offer");
+		mail.setCreatedDate(new Date());
+		mail.setBody(new String("This Is Deal2day Deal Info Mail"+coupon.getUserName()+", Download coupon for Below Deal"+"\n"+"Offer : "+offer.getOfferSummary()+"\n"+"Contact Details : "+coupon.getSendTo().substring(0, 7)+"***"+"\n"+"\n"+"Regards"+"\n"+"http://deal2day.in"+"\n"+"contact at : contact@deal2day.in"+"\n"+"call :+91-9867598284"+"/n").getBytes());
+		 
+		MailService.getInstanse().addMail(mail);
+		MailService.getInstanse().sendMail(mail);	   	   
+	}
+	
+	@Override
+	public void informToMerchantBySMS(Coupon coupon, String offerSummary, String mobileNo) {
+		
+		String template = SMSTemplates.sendInfoToMerchantTemplate(coupon, offerSummary);
+		smsService.sendSMS(mobileNo, template);
+	}
+}
+

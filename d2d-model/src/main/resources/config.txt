@@ -1,0 +1,2 @@
+>mail-config.properties - Mail
+>sms-config.properties - SMS

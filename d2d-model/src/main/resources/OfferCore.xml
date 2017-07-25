@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+       http://www.springframework.org/schema/aop 
+       http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+ 		<property name="location">
+			<value>db-#{systemProperties['currentEnv']}-config.properties</value>
+		</property>
+	</bean>
+	
+	<bean id="sessionFactory1" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource"><ref local="offerDataSource" /></property>
+		<property name="annotatedClasses">
+	       <list>	           
+				<value>com.d2d.model.beans.MerchantLogin</value>
+				<value>com.d2d.model.beans.MerchantProfile</value>
+				<value>com.d2d.model.beans.LocationModel</value>
+				<value>com.d2d.model.beans.OfferModel</value>
+				<value>com.d2d.model.beans.CouponHistoryModel</value>
+				<value>com.d2d.model.beans.CategoryModel</value>
+				<value>com.d2d.model.beans.SubscriberModel</value>
+				<value>com.d2d.model.beans.MerchantNameModel</value>
+		    </list>
+	    </property>
+	
+	    <property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.use_sql_comments">true</prop>
+				<prop key="hibernate.max_fetch_depth">3</prop>
+				<prop key="hibernate.generate_statistics">true</prop>
+				<prop key="hibernate.bytecode.use_reflection_optimizer">false</prop>
+				<prop key="hibernate.query.factory_class">org.hibernate.hql.ast.ASTQueryTranslatorFactory</prop>
+				<!-- <prop key="hibernate.hbm2ddl.auto">create</prop> -->
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="offerDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${offer.url}" />
+		<property name="username" value="${offer.username}" />
+		<property name="password" value="${offer.password}" />
+	</bean>
+	
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+    	<property name="sessionFactory" ref="sessionFactory1"/>
+  	</bean>
+  
+  	<aop:config>
+    	<aop:pointcut id="serviceMethods" expression="execution(* com.d2d.db.service.impl.OfferDBServiceImpl.*(..))"/>
+    	<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
+  	</aop:config>
+
+  	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+	    <tx:attributes>
+	    	<tx:method name="*" />
+    	</tx:attributes>
+  	</tx:advice>
+  	
+  	<bean id="offerDAO" class="com.d2d.model.dao.OfferDAO">
+	   <property name="sessionFactory" ref="sessionFactory1"/>
+	</bean>
+
+  	<bean id="offerDBService" class="com.d2d.db.service.impl.OfferDBServiceImpl">
+    	<property name="offerDAOIntf" ref="offerDAO"/>
+  	</bean>	
+</beans>
